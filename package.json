@@ -5,9 +5,10 @@
   "main": "./electron/main.js",
   "homepage": "./",
   "author": {
-    "name": "Shangshu",
-    "email": "shangshu@shangshu.com"
+    "name": "oracis",
+    "email": "oracis@gmail.com"
   },
+  "repository": "https://github.com/oracis/my-doc",
   "description": "MyDoc 是一个基于 React + Electron 的文档管理系统",
   "scripts": {
     "dev": "vite",
@@ -21,6 +22,8 @@
     "build:for:electron": "cross-env ELECTRON=true vite build",
     "pack": "electron-builder --dir",
     "prepack": "npm run build:for:electron",
+    "release": "npm run electron:builder",
+    "prerelease": "npm run build:for:electron",
     "app:build": "npm run build:for:electron && npm run electron:builder",
     "onlyEle": "nodemon --watch ./electron/main.js --watch ./electron/menuTemplate.js --exec \"electron .\""
   },
@@ -32,6 +35,9 @@
       "buildResources": "public",
       "output": "dist_electron"
     },
+    "publish": [
+      "github"
+    ],
     "files": [
       "dist/**/*",
       "electron/**/*",
