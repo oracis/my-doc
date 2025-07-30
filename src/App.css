@@ -1,0 +1,52 @@
+.icon-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.file-list {
+  .file-title {
+    margin-left: 10px;
+  }
+}
+
+.c-link {
+  cursor: pointer;
+}
+
+.start-page {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-size: 30px;
+  color: #ccc;
+}
+
+.left-panel {
+  min-height: 100vh;
+  position: relative;
+
+  .btn-group {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+
+    .no-border {
+      border-radius: 0;
+    }
+  }
+}
+
+.CodeMirror-scroll {
+  height: 600px !important;
+}
+
+.sync-status {
+  position: absolute;
+  bottom: 12px;
+  left: 10px;
+}
