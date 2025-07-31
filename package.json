@@ -1,14 +1,17 @@
 {
   "name": "my-doc",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.0.9",
   "main": "./electron/main.js",
   "homepage": "./",
   "author": {
     "name": "oracis",
     "email": "oracis@gmail.com"
   },
-  "repository": "https://github.com/oracis/my-doc",
+   "repository": {
+        "type": "git",
+        "url": "https://github.com/oracis/my-doc"
+    },
   "description": "MyDoc 是一个基于 React + Electron 的文档管理系统",
   "scripts": {
     "dev": "vite",
@@ -35,9 +38,17 @@
       "buildResources": "public",
       "output": "dist_electron"
     },
-    "publish": [
-      "github"
-    ],
+    "publish": {
+        "provider": "github",
+        "host": "github.com",
+        "owner": "oracis",
+        "repo": "https://github.com/oracis/my-doc",
+        "releaseType": "draft"
+    },
+    "releaseInfo": {
+            "releaseNotesFile": "release-notes.md"
+        }
+    },
     "files": [
       "dist/**/*",
       "electron/**/*",
@@ -98,6 +109,7 @@
     "clsx": "^2.1.1",
     "easymde": "^2.20.0",
     "electron-store": "^10.1.0",
+    "electron-updater": "^6.6.2",
     "qiniu": "^7.14.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
