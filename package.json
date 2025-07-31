@@ -8,10 +8,10 @@
     "name": "oracis",
     "email": "oracis@gmail.com"
   },
-   "repository": {
-        "type": "git",
-        "url": "https://github.com/oracis/my-doc"
-    },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/oracis/my-doc"
+  },
   "description": "MyDoc 是一个基于 React + Electron 的文档管理系统",
   "scripts": {
     "dev": "vite",
@@ -38,16 +38,13 @@
       "buildResources": "public",
       "output": "dist_electron"
     },
+    "extends": null,
     "publish": {
-        "provider": "github",
-        "host": "github.com",
-        "owner": "oracis",
-        "repo": "https://github.com/oracis/my-doc",
-        "releaseType": "draft"
-    },
-    "releaseInfo": {
-            "releaseNotesFile": "release-notes.md"
-        }
+      "provider": "github",
+      "host": "github.com",
+      "owner": "oracis",
+      "repo": "https://github.com/oracis/my-doc",
+      "releaseType": "draft"
     },
     "files": [
       "dist/**/*",
