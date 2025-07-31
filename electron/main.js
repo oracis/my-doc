@@ -2,6 +2,7 @@ const { app, BrowserWindow, ipcMain, dialog, Menu } = require('electron');
 const { autoUpdater } = require('electron-updater');
 const path = require('path');
 const fs = require('fs');
+const logger = require('electron-log');
 const {
   writeFile,
   renameFile,
@@ -19,13 +20,6 @@ const { v4: uuidv4 } = require('uuid');
 const template = require('./menuTemplate');
 const AppWindow = require('./AppWindow');
 const QiniuManager = require('../src/utils/qiniuManager');
-
-
-Object.defineProperty(app, 'isPackaged', {
-  get() {
-    return true;
-  }
-});
 
 const createManager = () => {
   const { accessKey, secretKey, bucketName } = settingsStore.get('config');
@@ -57,11 +51,19 @@ function createWindow() {
 
 app.whenReady().then(() => {
   autoUpdater.autoDownload = false;
+  logger.transports.file.level = 'debug';
+  autoUpdater.logger = logger;
+  autoUpdater.disableWebInstaller = false;
+  autoUpdater.forceDevUpdateConfig = true;
+
   if (!app.isPackaged) {
+    // 方法1: 项目根目录创建dev-app-update.yml
     autoUpdater.updateConfigPath = path.join(
       __dirname,
-      '../dev_app_update.yml'
+      '../dev-app-update.yml'
     );
+    // 方法2：
+    // autoUpdater.setFeedURL('http://127.0.0.1:3000');
     autoUpdater.checkForUpdates();
   } else {
     autoUpdater.checkForUpdatesAndNotify();
@@ -82,31 +84,30 @@ app.whenReady().then(() => {
   });
 
   autoUpdater.on('update-downloaded', () => {
-    dialog.showMessageBox(
-      {
+    dialog
+      .showMessageBox({
         title: '安装更新',
         message: '更新下载完毕，应用将重启并进行安装',
-      },
-      () => {
-        setImmediate(() => autoUpdater.quitAndInstall());
-      }
-    );
+      })
+      .then(() => {
+        autoUpdater.quitAndInstall();
+      });
   });
 
   autoUpdater.on('update-available', () => {
-    dialog.showMessageBox(
-      {
+    dialog
+      .showMessageBox({
         type: 'info',
         title: '发现新版本',
         message: '发现新版本，是否现在更新？',
         buttons: ['是', '否'],
-      },
-      (buttonIndex) => {
-        if (buttonIndex === 0) {
+      })
+      .then(({ response }) => {
+        if (response === 0) {
+          console.log('download update');
           autoUpdater.downloadUpdate();
         }
-      }
-    );
+      });
   });
   createWindow();
 
