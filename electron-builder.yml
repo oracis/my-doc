@@ -1,0 +1,4 @@
+publish:
+  provider: generic // 使用一个通用的 HTTP 服务器作为更新源。
+  url: http://localhost:3000.com // 存放安装包和描述文件的地址
+  updaterCacheDirName: electron-update-demo-updater
