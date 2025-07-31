@@ -1,5 +1,5 @@
 const { app, BrowserWindow, ipcMain, dialog, Menu } = require('electron');
-// const isDev = require('electron-is-dev');
+const { autoUpdater } = require('electron-updater');
 const path = require('path');
 const fs = require('fs');
 const {
@@ -19,6 +19,13 @@ const { v4: uuidv4 } = require('uuid');
 const template = require('./menuTemplate');
 const AppWindow = require('./AppWindow');
 const QiniuManager = require('../src/utils/qiniuManager');
+
+
+Object.defineProperty(app, 'isPackaged', {
+  get() {
+    return true;
+  }
+});
 
 const createManager = () => {
   const { accessKey, secretKey, bucketName } = settingsStore.get('config');
@@ -49,6 +56,58 @@ function createWindow() {
 }
 
 app.whenReady().then(() => {
+  autoUpdater.autoDownload = false;
+  if (!app.isPackaged) {
+    autoUpdater.updateConfigPath = path.join(
+      __dirname,
+      '../dev_app_update.yml'
+    );
+    autoUpdater.checkForUpdates();
+  } else {
+    autoUpdater.checkForUpdatesAndNotify();
+  }
+
+  autoUpdater.on('error', (error) => {
+    dialog.showErrorBox('Error: ', error === null ? 'unknown' : error.stack);
+  });
+
+  autoUpdater.on('checking-for-update', () => {
+    console.log('checking for update...');
+  });
+  autoUpdater.on('download-progress', (progress) => {
+    let log_message = `Download speed: ${progress.bytesPerSecond}`;
+    log_message += ` - Downloaded ${progress.percent}%`;
+    log_message += ` (${progress.transferred} / ${progress.total})`;
+    console.log(log_message);
+  });
+
+  autoUpdater.on('update-downloaded', () => {
+    dialog.showMessageBox(
+      {
+        title: '安装更新',
+        message: '更新下载完毕，应用将重启并进行安装',
+      },
+      () => {
+        setImmediate(() => autoUpdater.quitAndInstall());
+      }
+    );
+  });
+
+  autoUpdater.on('update-available', () => {
+    dialog.showMessageBox(
+      {
+        type: 'info',
+        title: '发现新版本',
+        message: '发现新版本，是否现在更新？',
+        buttons: ['是', '否'],
+      },
+      (buttonIndex) => {
+        if (buttonIndex === 0) {
+          autoUpdater.downloadUpdate();
+        }
+      }
+    );
+  });
   createWindow();
 
   app.on('activate', () => {
